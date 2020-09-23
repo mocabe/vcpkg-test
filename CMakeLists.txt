@@ -14,8 +14,11 @@ vcpkg_configure()
 
 project(vcpkg-test CXX)
 
-find_package(sqlite3 REQUIRED)
+# some libraries provide unofficial targets.
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
+# otherwise normal package
+find_package(fmt CONFIG REQUIRED)
 
 add_executable(main main.cpp)
-target_include_directories(main PRIVATE ${SQLite3_INCLUDE_DIRS})
-target_link_libraries(main PRIVATE ${SQLite3_LIBRARIES})
+target_link_libraries(main PRIVATE unofficial::sqlite3::sqlite3)
+target_link_libraries(main PRIVATE fmt::fmt)
