@@ -1,18 +1,19 @@
 # bootstrap vcpkg (internal)
 function(_bootstrap_vcpkg)
-  execute_process(COMMAND ${VCPKG_SOURCE_DIR}/bootstrap-vcpkg.sh)
+  message(STATUS "bootstraping vcpkg")
+  if(WIN32)
+    execute_process(COMMAND ${VCPKG_SOURCE_DIR}/bootstrap-vcpkg.bat)
+  else()
+    execute_process(COMMAND ${VCPKG_SOURCE_DIR}/bootstrap-vcpkg.sh)
+  endif()
 endfunction()
 
 # configure vcpkg
 function(vcpkg_configure)
-  find_program(VCPKG_EXECUTABLE vcpkg PATHS ${VCPKG_SOURCE_DIR})
   if(NOT VCPKG_EXECUTABLE)
     _bootstrap_vcpkg()
   endif()
+  find_program(VCPKG_EXECUTABLE vcpkg PATHS ${VCPKG_SOURCE_DIR} REQUIRED)
   set(CMAKE_TOOLCHAIN_FILE ${VCPKG_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-endfunction()
-
-# install vcpkg package
-function(vcpkg_install NAME) 
-  execute_process(COMMAND ${VCPKG_EXECUTABLE} install ${NAME})
+  message(STATUS "configured vcpkg toolchain")
 endfunction()
