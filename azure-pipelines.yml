@@ -1,0 +1,52 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pr:
+- master
+
+variables:
+  System.Debug: true
+
+strategy:
+  matrix: 
+    GCC-9 Debug:
+      ImageName: 'ubuntu-latest'
+      BuildType: Debug
+      CMakeArgs: 
+        -GNinja 
+        -DCMAKE_C_COMPILER=gcc-9 
+        -DCMAKE_CXX_COMPILER=g++-9
+      BeforeBuild: 
+        sudo apt-get install ninja-build g++-9
+    Clang-10 Debug:
+      ImageName: 'ubuntu-latest'
+      BuildType: Debug
+      CMakeArgs: 
+        -GNinja 
+        -DCMAKE_C_COMPILER=clang-10 
+        -DCMAKE_CXX_COMPILER=clang++-10
+      BeforeBuild: 
+        sudo apt-get install ninja-build clang++-10
+    VS2019 Debug:
+      ImageName: 'windows-latest'
+      BuildType: Debug        
+      CMakeArgs: -G "Visual Studio 16 2019" -A x64
+      BeforeBuild:
+
+pool:
+  vmImage: $(ImageName)
+
+steps:
+- script: |
+    cd $(Build.SourcesDirectory)
+    mkdir build
+    cd build
+    $(BeforeBuild)
+    cmake .. $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType)
+    cmake --build .
+  displayName: 'Build'
