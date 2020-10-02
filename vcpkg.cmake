@@ -10,6 +10,7 @@ endfunction()
 
 # configure vcpkg
 function(vcpkg_configure)
+  find_program(VCPKG_EXECUTABLE vcpkg PATHS ${VCPKG_SOURCE_DIR})
   if(NOT VCPKG_EXECUTABLE)
     _bootstrap_vcpkg()
   endif()

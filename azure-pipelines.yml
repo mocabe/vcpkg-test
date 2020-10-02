@@ -42,14 +42,24 @@ pool:
   vmImage: $(ImageName)
 
 steps:
+- script: git submodule update --init external/vcpkg
+  displayName: 'Setup'
+
+- task: Cache@2
+  displayName: 'Cache vcpkg'
+  inputs:
+    key: $(Build.SourcesDirectory)/vcpkg.json | $(Build.SourcesDirectory)/.git/modules/external/vcpkg/HEAD | "$(Agent.OS)" | "0"
+    path: '$(Build.SourcesDirectory)/external/vcpkg'
+
 - script: |
-    cd $(Build.SourcesDirectory)
     mkdir build
     cd build
     $(BeforeBuild)
     cmake .. $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType)
     cmake --build .
   displayName: 'Build'
+  env:
+    VCPKG_BINARY_SOURCES: files,$(Build.SourcesDirectory)/external/vcpkg/archives,readwrite
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
