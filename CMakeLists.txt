@@ -9,8 +9,7 @@ set(VCPKG_SOURCE_DIR ${EXTERNAL_DIR}/vcpkg)
 execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init ${VCPKG_SOURCE_DIR})
 
 # init vcpkg
-include(vcpkg.cmake)
-vcpkg_configure()
+set(CMAKE_TOOLCHAIN_FILE ${VCPKG_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
 
 project(vcpkg-test CXX)
 
