@@ -68,6 +68,16 @@ steps:
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
+- task: DeleteFiles@1
+  displayName: 'Remove tmp files for vcpkg'
+  inputs:
+    SourceFolder: $(Build.SourcesDirectory)/external/vcpkg
+    Contents: |
+      buildtrees/*
+      downloads/*
+      installed/* 
+      packages/*
+
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
